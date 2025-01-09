@@ -1,0 +1,3 @@
+1 Andrzej Nowak 501348139 klient1
+2 Maciej Serweta 420213769 klient2
+3 Gabriela Osada 123456789 klient3

@@ -1,0 +1,7 @@
+1 Andrzej Nowak 501348139 klient1
+2 Maciej Serweta 420213769 klient2
+3 Gabriela Osada 123456789 klient3
+4 Adam Maslanka 123456789 klient4 
+5 Piotr B a usiak 987654321 klient5 
+6 admin admin admin admin 
+7 Krystian Dlugosz 123456789 haslo1     
