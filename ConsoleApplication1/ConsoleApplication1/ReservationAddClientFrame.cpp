@@ -7,7 +7,7 @@
 #include <fstream>
 
 Client client;
-
+//Utworzenie elementów GUI
 ReservationAddClientFrame::ReservationAddClientFrame(wxWindow* parent,wxString phone1) : wxPanel(parent, wxID_ANY, wxPoint(0, 0), wxSize(800, 600))
 {
 	panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800, 600));
@@ -53,11 +53,12 @@ ReservationAddClientFrame::ReservationAddClientFrame(wxWindow* parent,wxString p
 	phone = phone1;
 	BindEventHandler();
 } 
-
+//Dodanie obs³ugi zdarzeñ
 void ReservationAddClientFrame::BindEventHandler() {
 	submitButton->Bind(wxEVT_BUTTON, &ReservationAddClientFrame::OnSubmit, this);
 	backButton->Bind(wxEVT_BUTTON,&ReservationAddClientFrame::BackButton, this);
 }
+//obs³uga dodania rezerwacji
 void ReservationAddClientFrame::OnSubmit(wxCommandEvent& event)
 {
 
@@ -96,7 +97,7 @@ void ReservationAddClientFrame::OnSubmit(wxCommandEvent& event)
 
 	
 }
-
+//obs³uga przycisku wstecz
 void ReservationAddClientFrame::BackButton(wxCommandEvent& event)
 {
 	if (panel) {

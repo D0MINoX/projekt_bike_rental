@@ -1,5 +1,6 @@
 #include "bikes.h"
 #include"Functions.h"
+//funkcja sprawdzaj¹ca iloœæ dostêpnych rowerów
 vector<string> bikes::CheckBikes(string date)
 {
 	fstream File;
@@ -23,7 +24,7 @@ vector<string> bikes::CheckBikes(string date)
 		//return error;
 	}
 }
-
+//funkcja zmieniaj¹ca dostêpn¹ iloœæ plików
 void bikes::DelBikes(int b1, int b2, int b3, int b4, string date)
 {
 	ifstream inputFile("bikes.txt");
@@ -76,7 +77,7 @@ void bikes::DelBikes(int b1, int b2, int b3, int b4, string date)
 		wxMessageBox("Nie mo¿na zmieniæ nazwy pliku!", "B³¹d", wxOK | wxICON_ERROR);
 	}
 }
-
+//obs³uga zwrotu rowerów
 void bikes::AddBikes(int b1, int b2, int b3, int b4, string date)
 {
 	ifstream inputFile("bikes.txt");

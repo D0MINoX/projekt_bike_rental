@@ -1,7 +1,7 @@
 #include "Raporty.h"
 #include"Functions.h"
 
-
+//metoda obs³uguj¹ca generowanie raportu
 void Raporty::Generate(string date)
 {
     ifstream returned("rentals-returned.txt");

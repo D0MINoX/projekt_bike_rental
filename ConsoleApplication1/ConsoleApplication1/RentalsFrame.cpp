@@ -4,14 +4,16 @@
 #include "WorkerMenuFrame.h"
 #include "Raporty.h"
 
+//stworzenie panelu wypo¿yczeñ
 RentalsFrame::RentalsFrame(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxPoint(0, 0), wxSize(800, 600)), timer(this, wxID_ANY), grid(nullptr)
 {
 	CreateControls();
 	BindEventHandlers();
-	timer.Start(10000);
+	timer.Start(10000); //wystartowanie timera
 	DisplayTime();
 }
 
+//stworzenie elementów GUI
 void RentalsFrame::CreateControls()
 {
     panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800, 600));
@@ -79,6 +81,7 @@ void RentalsFrame::CreateControls()
 	panel->SetSizerAndFit(mainSizer);
 }
 
+//przypisanie funkcji i eventów do elementów
 void RentalsFrame::BindEventHandlers()
 {
 	Bind(wxEVT_TIMER, &RentalsFrame::OnTimer, this);
@@ -89,6 +92,7 @@ void RentalsFrame::BindEventHandlers()
     raport->Bind(wxEVT_BUTTON, &RentalsFrame::OnClickRaport, this);
 }
 
+//wyœwietla bierz¹cy czas
 void RentalsFrame::DisplayTime()
 {
 	wxDateTime now = wxDateTime::Now();
@@ -97,13 +101,16 @@ void RentalsFrame::DisplayTime()
 	dateTimeDisplay->SetLabel(dateTimeStr);
 }
 
+//odœwierza czas
 void RentalsFrame::OnTimer(wxTimerEvent& event)
 {
 	DisplayTime();
 }
 
+//dodawanie wypo¿yczeñ
 void RentalsFrame::OnClickAdd(wxCommandEvent& event)
 {
+    //pobranie wartoœci z pól formularza
     wxString nameVal = name->GetValue();
     wxString phoneVal = phone->GetValue();
     wxString placeVal = place->GetString(place->GetSelection());
@@ -116,10 +123,14 @@ void RentalsFrame::OnClickAdd(wxCommandEvent& event)
     int b2 = touring_bikes->GetValue();
     int b3 = gravel_bikes->GetValue();
     int b4 = enduro_bikes->GetValue();
+
+    //sprawdza czy wszystkie potrzebne wartoœci zosta³y podane
     if (nameVal != "" and phoneVal != "" and (b1 > 0 or b2 > 0 or b3 > 0 or b4 > 0))
     {
+        //pobranie iloœci dostêpnych rowerów
         bikes bikes;
         vector<string>available = bikes.CheckBikes(dateStr.ToStdString());
+        //sprawdzenie czy jest wystarczaj¹ca iloœæ rowerów
         if (stoi(available[0]) >= b1 && stoi(available[1]) >= b2 && stoi(available[2]) >= b3 && stoi(available[3]) >= b4) {
             Rentals addRental;
             addRental.SaveRentalsToFile(nameVal, phoneVal, dateStr, timeStr, b1, b2, b3, b4, placeVal);
@@ -139,11 +150,14 @@ void RentalsFrame::OnClickAdd(wxCommandEvent& event)
     }
 }
 
+//wyszukiwanie wypo¿yczeñ
 void RentalsFrame::OnClickSearch(wxCommandEvent& event)
 {
     Rentals searchForRental;
 
     wxString phoneVal = phone->GetValue();
+
+    //sprawdzenie jakie wartoœci zosta³y podane do wyszukania i wywo³anie obs³ugi wyszukania
     if (phoneVal == "*") {
         vector<vector<string>> rental = searchForRental.AllRentals();
         if (rental.size() != 0) {
@@ -163,8 +177,10 @@ void RentalsFrame::OnClickSearch(wxCommandEvent& event)
     }
 }
 
+//wyœwietlanie wyszukanych rezerwacji
 void RentalsFrame::DisplayRentals(vector<vector<string>> allRentals)
 {
+    //usuniêcie grid jeœli istnieje
     if (grid != nullptr) {
         mainSizer->Detach(grid);
         grid->Destroy();
@@ -172,32 +188,27 @@ void RentalsFrame::DisplayRentals(vector<vector<string>> allRentals)
         panel->Fit();
     }
     mainSizer->Detach(back);
-    //back->Destroy();
-
+    //stworzenie nowego grid i przypisanie wartoœci w nim
     grid = new wxGrid(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
     int rows = allRentals.size();
-    int cols = !allRentals.empty() ? allRentals[0].size() + 1 : 1; // Add 1 for the radio button column
+    int cols = !allRentals.empty() ? allRentals[0].size() + 1 : 1;
     grid->CreateGrid(rows, cols);
 
-    // Add radio button column
     for (int i = 0; i < rows; ++i) {
         grid->SetCellRenderer(i, 0, new wxGridCellBoolRenderer());
         grid->SetCellEditor(i, 0, new wxGridCellBoolEditor());
-        //grid->SetCellValue(i, 0, "0"); // Default unchecked
         grid->SetCellAlignment(i, 0, wxALIGN_CENTER, wxALIGN_CENTER);
     }
 
-    // Set headers
     vector<string> headers = {"Select", "Imiê", "Telefon", "Data", "Godzina", "mountain_bikes", "touring_bikes", "gravel_bikes", "enduro_bikes", "Miejsce"};
     for (size_t i = 0; i < headers.size() && i < static_cast<size_t>(cols); ++i) {
         grid->SetColLabelValue(i, headers[i]);
     }
 
-    // Fill other columns with data
     for (size_t i = 0; i < allRentals.size(); ++i) {
         for (size_t j = 0; j < allRentals[i].size(); ++j) {
-            grid->SetCellValue(i, j + 1, allRentals[i][j]); // Offset by 1 for the radio column
+            grid->SetCellValue(i, j + 1, allRentals[i][j]);
             grid->SetReadOnly(i, j + 1, true);
         }
     }
@@ -205,12 +216,12 @@ void RentalsFrame::DisplayRentals(vector<vector<string>> allRentals)
     grid->AutoSizeColumns();
     grid->AutoSizeRows();
     grid->SetRowLabelSize(20);
-    // Add grid to the layout
+    //dodanie geid do sizera
     mainSizer->Add(grid, 1, wxEXPAND | wxALL, 10);
 
+    //przesuniêcie przycisku back
     mainSizer->Add(back, 0, wxALIGN_LEFT | wxALL, 5);
 
-    // Bind event to handle row selection
     grid->Bind(wxEVT_GRID_CELL_LEFT_CLICK, &RentalsFrame::OnGridCellClick, this);
 
     DisplayTime();
@@ -220,43 +231,47 @@ void RentalsFrame::DisplayRentals(vector<vector<string>> allRentals)
     Layout();
 }
 
+//zaznacznie checkboxów
 void RentalsFrame::OnGridCellClick(wxGridEvent& event)
 {
     int row = event.GetRow();
     int col = event.GetCol();
 
-    if (col == 0) { // Radio button column
-        // Set the clicked row's radio button to checked
+    if (col == 0) { 
         for (int i = 0; i < grid->GetNumberRows(); ++i) {
             grid->SetCellValue(i, 0, (i == row ? "1" : "0"));
         }
-        grid->ForceRefresh(); // Redraw the grid
+        grid->ForceRefresh();
     }
     event.Skip();
 }
 
+//pobranie zaznaczonych lini z grid
 vector<string> RentalsFrame::GetSelectedRowValues()
 {
     for (int i = 0; i < grid->GetNumberRows(); ++i) {
-        if (grid->GetCellValue(i, 0) == "1") { // Check if radio button is selected
+        if (grid->GetCellValue(i, 0) == "1") {
             vector<string> rowValues;
-            for (int j = 1; j < grid->GetNumberCols(); ++j) { // Skip the radio button column
+            for (int j = 1; j < grid->GetNumberCols(); ++j) {
                 rowValues.push_back(grid->GetCellValue(i, j).ToStdString());
             }
             return rowValues;
         }
     }
-    return {}; // Return empty vector if no row is selected
+    return {};
 }
 
+//usuwanie wypo¿yczeñ
 void RentalsFrame::OnClickPay(wxCommandEvent& event)
 {
+    //sprawdzenie czy grid istnieje
     if (grid == nullptr) {
         wxMessageBox("Nic nie wybrano", "Info", wxOK | wxICON_INFORMATION);
     }
     else
     {
         vector<string> checkedRows = GetSelectedRowValues();
+        //sprawdzenie czy coœ zosta³o zaznaczone
         if (checkedRows.empty()) {
             wxMessageBox("Nic nie wybrano", "Info", wxOK | wxICON_INFORMATION);
         }
@@ -264,6 +279,7 @@ void RentalsFrame::OnClickPay(wxCommandEvent& event)
             Rentals rentals;
             wxString rental;
             rental = "";
+            //wywo³anie obs³ugi usuwania wypo¿yczeñ dla zaznaczonej lini
             for (int i = 0; i < checkedRows.size(); i++) {
                 rental += checkedRows[i] + " ";
                 rentals.DelRentals(rental);
@@ -273,6 +289,7 @@ void RentalsFrame::OnClickPay(wxCommandEvent& event)
     }
 }
 
+//tworzenie raportu
 void RentalsFrame::OnClickRaport(wxCommandEvent& event)
 {
     wxDateTime now = wxDateTime::Now();
@@ -281,6 +298,7 @@ void RentalsFrame::OnClickRaport(wxCommandEvent& event)
     raporty.Generate(dateTimeStr);
 }
 
+//wyœwietlenie dostêpnych rowerów
 void RentalsFrame::Available()
 {
     string dateStr = wxDateTime::Now().Format("%d-%m-%Y").ToStdString();
@@ -298,6 +316,7 @@ void RentalsFrame::Available()
     labelBike4->SetLabel(label4);
 }
 
+//cofniêcie do poprzedniego panelu(WorkerMenuFrame)
 void RentalsFrame::OnClickBack(wxCommandEvent& evt)
 {
     panel->Destroy();

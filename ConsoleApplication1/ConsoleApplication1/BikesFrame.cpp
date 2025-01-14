@@ -7,7 +7,7 @@ BikesFrame::BikesFrame(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxPoint(0, 
 	CreateControls();
 	BindEventHandlers();
 }
-
+//wyœwietlenie GUI
 void BikesFrame::CreateControls()
 {
 	panel = new wxPanel(this, wxID_ANY, wxPoint(0, 0), wxSize(800, 300));
@@ -30,13 +30,13 @@ void BikesFrame::CreateControls()
 	Available(selectedDate);
 	Layout();
 }
-
+//dodanie elementów alcji
 void BikesFrame::BindEventHandlers()
 {
 	date->Bind(wxEVT_DATE_CHANGED, &BikesFrame::OnChangeDate, this);
 	back->Bind(wxEVT_BUTTON, &BikesFrame::OnClickBack, this);
 }
-
+//wyœwietlanie dostêpnych rowerów
 void BikesFrame::Available(wxString& selectedDate)
 {
 	bikes bikes;

@@ -3,25 +3,27 @@
 #include "bikes.h"
 #include "WorkerMenuFrame.h"
 
-
+//stworzenie panelu rezerwacji pracownika
 ReservationsFrame::ReservationsFrame(wxWindow* parent) : wxPanel(parent, wxID_ANY, wxPoint(0,0), wxSize(800, 600)), timer(this, wxID_ANY), grid(nullptr)
 {
 	CreateControls();
 	BindEventHandlers();
-	timer.Start(10000);
+	timer.Start(10000); //wystartowanie timera
 	DisplayTime();
 }
 
+//tworzenie elementów GUI
 void ReservationsFrame::CreateControls()
 {
 	panel = new wxPanel(this, wxID_ANY, wxPoint(0,0), wxSize(800, 300));
 
+	//tablica z wyborami do wxChoice
 	wxArrayString choices;
 	choices.Add("Szczawnica1");
 	choices.Add("Sczawnica2");
 	choices.Add("Kroscienko");
 	place = new wxChoice(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
-	place->SetSelection(1);
+	place->SetSelection(1); //domyœlnie wybrany
 
 	name = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(0, 0));
 	phone = new wxTextCtrl(panel, wxID_ANY, "", wxPoint(150, 0));
@@ -44,9 +46,11 @@ void ReservationsFrame::CreateControls()
 	remove = new wxButton(panel, wxID_ANY, "usuñ", wxPoint(200, 50));
 	rent = new wxButton(panel, wxID_ANY, "wypo¿ycz");
 	
-	name->SetHint("name");
-	phone->SetHint("phone");
+	//opisy pól z imieniem i numerem telefonu
+	name->SetHint("imiê");
+	phone->SetHint("telefon");
 
+	//stworzenie sizerów i dodanie do nich elementów
 	sizerForm = new wxBoxSizer(wxHORIZONTAL);
 	sizerForm2 = new wxBoxSizer(wxHORIZONTAL);
 	sizerButton = new wxBoxSizer(wxHORIZONTAL);
@@ -85,6 +89,7 @@ void ReservationsFrame::CreateControls()
 	panel->SetSizerAndFit(sizer);
 }
 
+//przypisanie funkcji i eventów do elementów
 void ReservationsFrame::BindEventHandlers()
 {
 	Bind(wxEVT_TIMER, &ReservationsFrame::OnTimer, this);
@@ -96,6 +101,7 @@ void ReservationsFrame::BindEventHandlers()
 	rent->Bind(wxEVT_BUTTON, &ReservationsFrame::OnClickRent, this);
 }
 
+//wyœwietla bierz¹cy czas
 void ReservationsFrame::DisplayTime()
 {
 	wxDateTime now = wxDateTime::Now();
@@ -104,13 +110,16 @@ void ReservationsFrame::DisplayTime()
 	dateTimeDisplay->SetLabel(dateTimeStr);
 }
 
+//odœwierza czas
 void ReservationsFrame::OnTimer(wxTimerEvent& event)
 {
 	DisplayTime();
 }
 
+//dodawanie rezerwacji
 void ReservationsFrame::OnClickAdd(wxCommandEvent& event)
 {
+	//pobranie wartoœci z pól formularza
 	wxString nameVal = name->GetValue();
 	wxString phoneVal = phone->GetValue();
 	wxString dateVal = date->GetValue().Format("%d-%m-%Y");
@@ -118,15 +127,20 @@ void ReservationsFrame::OnClickAdd(wxCommandEvent& event)
 	int b2 = touring_bikes->GetValue();
 	int b3 = gravel_bikes->GetValue();
 	int b4 = enduro_bikes->GetValue();
+
+	//sprawdza czy wszystkie potrzebne wartoœci zosta³y podane
 	if (nameVal!="" and phoneVal!="" and (b1>0 or b2>0 or b3>0 or b4>0))
 	{
+		//pobranie iloœci dostêpnych rowerów
 		bikes bikes;
 		vector<string>available = bikes.CheckBikes(dateVal.ToStdString());
+
+		//sprawdzenie czy jest wystarczaj¹ca iloœæ rowerów
 		if (stoi(available[0]) >= b1 && stoi(available[1]) >= b2 && stoi(available[2]) >= b3 && stoi(available[3]) >= b4) {
+			//wywo³anie obsugi dodawania rezewacji, zmniejszenia iloœci rowerów, wyœwietlenie nowej iloœci rowerów
 			Reservations addRes;
 			addRes.SaveReservationToFile(nameVal, phoneVal, dateVal, b1, b2, b3, b4);
 			wxMessageBox("Dodano rezerwacje!", "info", wxOK | wxICON_INFORMATION);
-			//bikes bikes;
 			bikes.DelBikes(b1, b2, b3, b4, dateVal.ToStdString());
 			Available(dateVal);
 			Layout();
@@ -141,12 +155,14 @@ void ReservationsFrame::OnClickAdd(wxCommandEvent& event)
 	}
 }
 
+//wyszukiwanie rezerwacji
 void ReservationsFrame::OnClickSearch(wxCommandEvent& event)
 {
 	Reservations searchForRes;
 	vector<vector<string>> res;
 
 	wxString phoneVal = phone->GetValue();
+	//sprawdzenie jakie wartoœci zosta³y podane do wyszukania i wywo³anie obs³ugi wyszukania
 	if (phoneVal == "*") {
 		res = searchForRes.AllReservations();
 		if (res.size() != 0) {
@@ -174,8 +190,10 @@ void ReservationsFrame::OnClickSearch(wxCommandEvent& event)
 	}
 }
 
+//wyœwietlanie wyszukanych rezerwacji
 void ReservationsFrame::DisplayRes(vector<vector<string>> allRes)
 {
+	//usuniêcie grid jeœli istnieje
 	if (grid!=nullptr) {
 		sizer->Detach(grid);
 		grid->Destroy();
@@ -184,13 +202,13 @@ void ReservationsFrame::DisplayRes(vector<vector<string>> allRes)
 	}
 	sizer->Detach(back);
 
+	//stworzenie nowego grid i przypisanie wartoœci w nim
 	grid = new wxGrid(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize);
 
 	int rows = allRes.size();
 	int cols = !allRes.empty() ? allRes[0].size() : 0;
 	grid->CreateGrid(rows, cols+1);
 
-	//grid->SetColLabelValue(0, "Select");
 	for (int i = 0; i < rows; ++i) {
 		grid->SetCellRenderer(i, 0, new wxGridCellBoolRenderer());
 		grid->SetCellEditor(i, 0, new wxGridCellBoolEditor());
@@ -214,9 +232,10 @@ void ReservationsFrame::DisplayRes(vector<vector<string>> allRes)
 	grid->AutoSizeRows();
 	grid->SetRowLabelSize(20);
 
-	// Dodaj siatkê do uk³adu
+	//dodanie geid do sizera
 	sizer->Add(grid, 1, wxEXPAND | wxALL, 10);
 
+	//przesuniêcie przycisku back
 	sizer->Add(back, 0, wxALIGN_LEFT);
 
 	panel->Fit();
@@ -224,20 +243,24 @@ void ReservationsFrame::DisplayRes(vector<vector<string>> allRes)
 	Layout();
 }
 
+//usuwanie rezerwacji
 void ReservationsFrame::OnClickRemove(wxCommandEvent& event)
 {
+	//sprawdzenie czy grid istnieje
 	if (grid == nullptr) {
 		wxMessageBox("Nic nie wybrano", "Info", wxOK | wxICON_INFORMATION);
 	}
 	else
 	{
 		auto checkedRows = GetGridVal();
+		//sprawdzenie czy coœ zosta³o zaznaczone
 		if (checkedRows.empty()) {
 			wxMessageBox("Nic nie wybrano", "Info", wxOK | wxICON_INFORMATION);
 		}
 		else {
 			Reservations reservations;
 			wxString res;
+			//wywo³anie obs³ugi usuwania rezerwacji dla ka¿dej zaznaczonej lini
 			for (const auto& row : checkedRows) {
 				res = "";
 				for (const auto& value : row) {
@@ -251,6 +274,7 @@ void ReservationsFrame::OnClickRemove(wxCommandEvent& event)
 	}
 }
 
+//pobranie zaznaczonych lini z grid
 vector<vector<string>> ReservationsFrame::GetGridVal()
 {
 	vector<vector<string>> checkedRows;
@@ -270,14 +294,17 @@ vector<vector<string>> ReservationsFrame::GetGridVal()
 	return checkedRows;
 }
 
+//wypo¿yczanie rezerwacji
 void ReservationsFrame::OnClickRent(wxCommandEvent& evt)
 {
+	//sprawdzenie czy grid istnieje
 	if (grid == nullptr) {
 		wxMessageBox("Nic nie wybrano", "Info", wxOK | wxICON_INFORMATION);
 	}
 	else
 	{
 		auto checkedRows = GetGridVal();
+		//sprawdzenie czy coœ zosta³o zaznaczone
 		if (checkedRows.empty()) {
 			wxMessageBox("Nic nie wybrano", "Info", wxOK | wxICON_INFORMATION);
 		}
@@ -287,6 +314,7 @@ void ReservationsFrame::OnClickRent(wxCommandEvent& evt)
 			wxDateTime now = wxDateTime::Now();
 			wxString time = now.Format("%d-%m-%Y %H:%M");
 			wxString placeVal = place->GetString(place->GetSelection());
+			//wywo³anie obs³ugi usuwania rezerwacji dla ka¿dej zaznaczonej lini
 			for (const auto& row : checkedRows) {
 				res = "";
 				for (const auto& value : row) {
@@ -300,6 +328,7 @@ void ReservationsFrame::OnClickRent(wxCommandEvent& evt)
 	}
 }
 
+//wyœwietlenie dostêpnych rowerów
 void ReservationsFrame::Available(wxString& selectedDate)
 {
 	bikes bikes;
@@ -315,6 +344,7 @@ void ReservationsFrame::Available(wxString& selectedDate)
 	labelBike4->SetLabel(label4);
 }
 
+//cofniêcie do poprzedniego panelu(WorkerMenuFrame)
 void ReservationsFrame::OnClickBack(wxCommandEvent& evt)
 {
 	panel->Destroy();
@@ -325,6 +355,7 @@ void ReservationsFrame::OnClickBack(wxCommandEvent& evt)
 	Layout();
 }
 
+//wyœwietlanie dostêpnych rowetów zale¿nie od daty
 void ReservationsFrame::OnChangeDate(wxDateEvent& event)
 {
 	wxString selectedDate = event.GetDate().Format("%d-%m-%Y");

@@ -10,6 +10,6 @@ class Workers:public Users
 	string login;
 	int placeId;
 public:
-	string LogIn(const string& login, const string& password);
+	string LogIn(const string& login, const string& password) override;
 };
 

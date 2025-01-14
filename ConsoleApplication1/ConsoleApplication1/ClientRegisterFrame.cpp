@@ -8,6 +8,7 @@ ClientRegisterFrame::ClientRegisterFrame(wxWindow* parent): wxPanel(parent, wxID
 	BindEventHandlers();
 	
 }
+//skonfigurowanie kontrolek interfejsu u¿ytkownika
 void ClientRegisterFrame::CreateControls() {
 	panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800, 600));
 
@@ -50,11 +51,13 @@ void ClientRegisterFrame::CreateControls() {
 
 	panel->SetSizerAndFit(sizer);
 }
+// Powi¹zanie obs³ugi zdarzeñ z odpowiednimi kontrolkami
 void ClientRegisterFrame::BindEventHandlers()
 {
 	submitButton->Bind(wxEVT_BUTTON, &ClientRegisterFrame::Submit, this);
 	backButton->Bind(wxEVT_BUTTON, &ClientRegisterFrame::BackButton, this);
 }
+// Obs³uguje klikniêcie przycisku wstecz
 void ClientRegisterFrame::BackButton(wxCommandEvent& event)
 {
 	if (panel) {
@@ -65,6 +68,7 @@ void ClientRegisterFrame::BackButton(wxCommandEvent& event)
 	panel->SetSize(this->GetClientSize());
 	Layout();
 }
+//prze³adowanie cofniêcia
 void ClientRegisterFrame::BackButton()
 {
 
@@ -76,6 +80,7 @@ void ClientRegisterFrame::BackButton()
 	panel->SetSize(this->GetClientSize());
 	Layout();
 }
+// Obs³uguje proces rejestracji nowego klienta
 void ClientRegisterFrame::Submit(wxCommandEvent& event)
 {
 	std::fstream inputFile("clients.txt"); 

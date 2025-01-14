@@ -10,6 +10,7 @@ ClientFrame::ClientFrame(wxWindow* parent) : wxPanel(parent, wxID_ANY)
     CreateControls();
     BindEventHandlers();
 }
+//konfigurowanie interfejsu GUI
 void ClientFrame::CreateControls()
 {
     panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800, 600));
@@ -46,22 +47,21 @@ void ClientFrame::CreateControls()
 
     panel->SetSizerAndFit(mainSizer);
 
-    // Make the panel fill the frame
     this->SetSizerAndFit(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(panel, 1, wxEXPAND);
 }
-
+// Powi¹zanie obs³ugi zdarzeñ z odpowiednimi kontrolkami
 void ClientFrame::BindEventHandlers()
 {
     loginSubButton->Bind(wxEVT_BUTTON, &ClientFrame::OnButtonClick, this);
     panel->Bind(wxEVT_CHAR_HOOK, &ClientFrame::OnEnterPress, this);
-    backButton->Bind(wxEVT_BUTTON, &ClientFrame::OnClickBack, this);  // Dodane obs³ugiwanie przycisku Wstecz
-    signinButton->Bind(wxEVT_BUTTON, &ClientFrame::OnClickSign, this);  // Dodane obs³ugiwanie przycisku Wstecz
+    backButton->Bind(wxEVT_BUTTON, &ClientFrame::OnClickBack, this);  
+    signinButton->Bind(wxEVT_BUTTON, &ClientFrame::OnClickSign, this);  
 
 }
 
 
-
+// Obs³uguje logowanie u¿ytkownika
 void ClientFrame::HandleLogIn()
 {
     wxString loginValue = login->GetValue();
@@ -92,11 +92,11 @@ void ClientFrame::HandleFrameSwap(string phone)
     Layout();  // Odœwie¿enie uk³adu
 }
 
-
+// Obs³uguje klikniêcie przycisku logowania
 void ClientFrame::OnButtonClick(wxCommandEvent& evt) {
     HandleLogIn();
 }
-
+// Obs³uguje klikniêcie przycisku rejestracji
 void ClientFrame::OnClickSign(wxCommandEvent& evt)
 {
     panel->Destroy();  
@@ -105,7 +105,7 @@ void ClientFrame::OnClickSign(wxCommandEvent& evt)
     panel->SetSize(this->GetClientSize());  
     Layout();  
 }
-
+// Obs³uguje naciœniêcie klawisza Enter
 void ClientFrame::OnEnterPress(wxKeyEvent& evt)
 {
     if (evt.GetKeyCode() == WXK_RETURN) {
@@ -117,7 +117,7 @@ void ClientFrame::OnEnterPress(wxKeyEvent& evt)
 }
 
 
-
+// Obs³uguje klikniêcie przycisku wstecz
 void ClientFrame::OnClickBack(wxCommandEvent& evt)
 {
     if (panel) {

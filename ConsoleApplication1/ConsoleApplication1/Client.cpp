@@ -6,7 +6,7 @@
 #include "Functions.h"
 
 
-
+//prze³adowana funkcja loguj¹ca klietnów
 string Client::LogIn(const string& phone, const string& password)
 {
 	fstream File;

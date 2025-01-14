@@ -5,16 +5,16 @@
 #include <vector>
 #include "Functions.h"
 
-
-string Workers::LogIn(const string& login, const string& password)
+//obs³uga logowania pracownika
+ string Workers::LogIn(const string& login, const string& password)
 {
 	fstream File;
 	File.open("workers.txt", ios::in);
-	if (File.good() == true) {
+	if (File.good() == true) { //sprawdzenie po³¹czenia z plikiem
 		string line;
 		while (getline(File, line)) {
 			vector<string>sliced_string = Functions::Slice(line);// wektro z podzielonymi danymi uzytkownika
-			if (sliced_string[3] == login && sliced_string[4] == password) {
+			if (sliced_string[3] == login && sliced_string[4] == password) { //sprawdzenie czy login i haslo sa poprawne
 				id = stoi(sliced_string[0]);
 				name = sliced_string[1];
 				surname = sliced_string[2];

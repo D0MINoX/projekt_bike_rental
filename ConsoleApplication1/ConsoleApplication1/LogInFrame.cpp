@@ -12,7 +12,7 @@ LogInFrame::LogInFrame(wxWindow* parent) : wxPanel(parent, wxID_ANY)
     CreateControls();
     BindEventHandlers();
 }
-
+//Konfiguracja GUI
 void LogInFrame::CreateControls()
 {
     panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(800, 600));
@@ -47,12 +47,12 @@ void LogInFrame::CreateControls()
 
     panel->SetSizerAndFit(mainSizer);
 
-    // Make the panel fill the frame
+   
     this->SetSizerAndFit(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(panel, 1, wxEXPAND);
 
 }
-
+// Powi¹zanie obs³ugi zdarzeñ z odpowiednimi kontrolkami
 void LogInFrame::BindEventHandlers()
 {
     loginSubButton->Bind(wxEVT_BUTTON, &LogInFrame::OnButtonClick, this);
@@ -61,7 +61,7 @@ void LogInFrame::BindEventHandlers()
 }
 
 
-
+// Obs³uguje logowanie pracowwnika
 void LogInFrame::HandleLogIn()
 {
     wxString loginValue = login->GetValue();

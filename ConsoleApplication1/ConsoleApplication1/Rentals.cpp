@@ -1,7 +1,7 @@
 #include "Rentals.h"
 #include "bikes.h"
 #include "Functions.h"
-
+//wyci¹gniêcie danych wypo¿yczeñ
 vector<vector<string>> Rentals::AllRentals()
 {
 	fstream File;
@@ -10,7 +10,7 @@ vector<vector<string>> Rentals::AllRentals()
 		string line;
 		vector<vector<string>> allRentals;
 		while (getline(File, line)) {
-			vector<string>sliced_string = Functions::Slice(line);// wektro z podzielonymi danymi rezerwacji
+			vector<string>sliced_string = Functions::Slice(line);
 			allRentals.push_back(sliced_string);
 		}
 		File.clear();
@@ -24,7 +24,7 @@ vector<vector<string>> Rentals::AllRentals()
 		//return error;
 	}
 }
-
+//wyci¹gniêcie danych po nr. telefonu
 vector<vector<string>> Rentals::RentalsPhone(const wxString& phone_log)
 {
 	fstream File;
@@ -33,7 +33,7 @@ vector<vector<string>> Rentals::RentalsPhone(const wxString& phone_log)
 		vector<vector<string>> allRentals;
 		string line;
 		while (getline(File, line)) {
-			vector<string>sliced_string = Functions::Slice(line);// wektro z podzielonymi danymi rezerwacji
+			vector<string>sliced_string = Functions::Slice(line);
 			if (sliced_string[1] == phone_log) {
 				allRentals.push_back(sliced_string);
 			}
@@ -49,7 +49,7 @@ vector<vector<string>> Rentals::RentalsPhone(const wxString& phone_log)
 		//return error;
 	}
 }
-
+//zapois wypo¿yczeñ do pliku
 void Rentals::SaveRentalsToFile(const wxString& name, const wxString& phone, const wxString& date, const wxString& time, int mountain, int touring, int gravel, int enduro, const wxString& place)
 {
 	ofstream file("rentals.txt", ios::app);
@@ -72,7 +72,7 @@ void Rentals::SaveRentalsToFile(const wxString& name, const wxString& phone, con
 		wxMessageBox("B³¹d zapisu do pliku!", "B³¹d", wxOK | wxICON_ERROR);
 	}
 }
-
+//usuniêcie wypo¿yczeñ
 void Rentals::DelRentals(const wxString& rental)
 {
 	ifstream inputFile("rentals.txt");

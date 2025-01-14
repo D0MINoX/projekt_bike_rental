@@ -6,7 +6,7 @@ MainMenuFrame::MainMenuFrame(wxWindow* parent) : wxPanel(parent, wxID_ANY) {
     CreateControls();
     BindEventHandlers();
 }
-
+//konfigurowanie GUI
 void MainMenuFrame::CreateControls() {
     workerButton = new wxButton(this, wxID_ANY, "Pracownik", wxPoint(50, 50), wxSize(200, 40));
     clientButton = new wxButton(this, wxID_ANY, "Klient", wxPoint(50, 100), wxSize(200, 40));
@@ -38,12 +38,12 @@ void MainMenuFrame::CreateControls() {
 
     this->SetSizerAndFit(Sizer);
 }
-
+// Powi¹zanie obs³ugi zdarzeñ z odpowiednimi kontrolkami
 void MainMenuFrame::BindEventHandlers() {
     workerButton->Bind(wxEVT_BUTTON, &MainMenuFrame::OnClickWorker, this);
     clientButton->Bind(wxEVT_BUTTON, &MainMenuFrame::OnClickClient, this);
 }
-
+// Obs³uguje klikniêcie przycisku Pracownik
 void MainMenuFrame::OnClickWorker(wxCommandEvent& evt) {
     this->Hide();
 
@@ -51,7 +51,7 @@ void MainMenuFrame::OnClickWorker(wxCommandEvent& evt) {
     logInPanel->SetSize(GetParent()->GetClientSize());
     logInPanel->Show();
 }
-
+// Obs³uguje klikniêcie przycisku Klient
 void MainMenuFrame::OnClickClient(wxCommandEvent& evt) {
     this->Hide();
 
